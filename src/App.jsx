@@ -119,20 +119,20 @@ export default function App() {
   );
 }
 
-// Inline styles
 const styles = {
   container: {
-    padding: '1rem',
+    backgroundColor: '#6B1A7B',
+    minHeight: '100vh',
+    padding: '2rem',
     fontFamily: 'sans-serif',
-    maxWidth: '600px',
-    margin: '0 auto',
   },
   field: {
-    marginBottom: '1rem',
+    marginBottom: '1.5rem',
   },
   label: {
     display: 'inline-block',
     fontWeight: 'bold',
+    color: 'white',
     verticalAlign: 'middle',
   },
   select: {
@@ -142,11 +142,12 @@ const styles = {
     fontSize: '1rem',
     backgroundColor: '#6B1A7B',
     color: 'white',
-    border: '1px solid #6B1A7B',
+    border: '1px solid #FFFFFF',
     borderRadius: '4px',
     marginTop: '0.5rem',
   },
 };
+
 
 
 
