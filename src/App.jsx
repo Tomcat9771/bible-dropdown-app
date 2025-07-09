@@ -4,15 +4,13 @@ import bibleData from './bibleData.json';
 
 export default function App() {
   // 1️⃣ Sort all translations A→Z
-  const sortedBibleData = useMemo(
-    () =>
-      [...bibleData].sort((a, b) =>
-        a.translation.localeCompare(b.translation, undefined, { sensitivity: 'base' })
-      ),
-    []
-  );
+  const sortedBibleData = useMemo(() =>
+    [...bibleData].sort((a, b) =>
+      a.translation.localeCompare(b.translation, undefined, { sensitivity: 'base' })
+    )
+  , []);
 
-  // 2️⃣ Group translations by language
+  // 2️⃣ Group by language
   const langMap = useMemo(() => {
     return bibleData.reduce((map, { translation, language }) => {
       (map[language] ??= []).push(translation);
@@ -20,28 +18,28 @@ export default function App() {
     }, {});
   }, []);
 
-  // 3️⃣ Sort languages A→Z
+  // 3️⃣ Sorted list of languages
   const sortedLanguages = useMemo(
     () => Object.keys(langMap).sort((a, b) => a.localeCompare(b)),
     [langMap]
   );
 
-  // — UI state for mode & selected language
+  // UI state
   const [mode, setMode] = useState('translation');
   const [selectedLanguage, setSelectedLanguage] = useState(sortedLanguages[0] || '');
 
-  // 4️⃣ Sorted translations for the chosen language
+  // 4️⃣ Translations for the selected language
   const languageTranslations = useMemo(
-    () =>
-      (langMap[selectedLanguage] || []).sort((a, b) =>
-        a.localeCompare(b, undefined, { sensitivity: 'base' })
-      ),
+    () => (langMap[selectedLanguage] || []).sort((a, b) =>
+      a.localeCompare(b, undefined, { sensitivity: 'base' })
+    ),
     [langMap, selectedLanguage]
   );
 
   return (
+    // ◀ Full‐viewport purple background
     <div style={styles.page}>
-      {/* Centered panel now up to 1140px wide */}
+      {/* ◀ Fixed‐width panel */}
       <div style={styles.panel}>
         {/* Mode Switch */}
         <div style={styles.field}>
@@ -55,7 +53,7 @@ export default function App() {
             />{' '}
             Choose by Translation
           </label>
-          <label style={{ ...styles.label, marginLeft: '1.5rem' }}>
+          <label style={{ ...styles.label, marginLeft: '2rem' }}>
             <input
               type="radio"
               name="mode"
@@ -94,9 +92,9 @@ export default function App() {
                 id="languageSelect"
                 style={styles.select}
                 value={selectedLanguage}
-                onChange={(e) => setSelectedLanguage(e.target.value)}
+                onChange={e => setSelectedLanguage(e.target.value)}
               >
-                {sortedLanguages.map((lang) => (
+                {sortedLanguages.map(lang => (
                   <option key={lang} value={lang}>
                     {lang}
                   </option>
@@ -108,7 +106,7 @@ export default function App() {
                 Translations for “{selectedLanguage}”:
               </label>
               <select id="langTranslationSelect" style={styles.select}>
-                {languageTranslations.map((trans) => (
+                {languageTranslations.map(trans => (
                   <option key={trans} value={trans}>
                     {trans}
                   </option>
@@ -126,25 +124,27 @@ const styles = {
   page: {
     backgroundColor: '#6B1A7B',
     minHeight: '100vh',
+    width: '100vw',            // ensure it spans full viewport width
     display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'flex-start', // or 'center' for vertical centering
+    justifyContent: 'center',  // center the panel horizontally
+    alignItems: 'flex-start',  // or 'center' to vertical‐center
     padding: '2rem 0',
     boxSizing: 'border-box',
+    margin: 0,
   },
   panel: {
-    width: '100%',
-    maxWidth: '1140px',  // <— now up to 1140px wide
-    backgroundColor: 'transparent',
-    padding: '0 1rem',   // optional inner padding
+    width: '100%',            // take up all available up to maxWidth
+    maxWidth: '1140px',       // fixed max width of 1140px
+    boxSizing: 'border-box',
+    padding: '1rem',
   },
   field: {
-    marginBottom: '1.25rem',
+    marginBottom: '1.5rem',
   },
   label: {
-    display: 'inline-block',
     color: 'white',
     fontWeight: 'bold',
+    display: 'inline-block',
     marginBottom: '0.5rem',
   },
   select: {
@@ -155,9 +155,11 @@ const styles = {
     color: 'white',
     border: '1px solid #fff',
     borderRadius: '4px',
-    marginTop: '0.25rem',
+    marginTop: '0.5rem',
+    boxSizing: 'border-box',
   },
 };
+
 
 
 
