@@ -40,113 +40,127 @@ export default function App() {
   );
 
   return (
-    <div style={styles.container}>
-      {/* Mode Switch */}
-      <div style={styles.field}>
-        <label style={styles.label}>
-          <input
-            type="radio"
-            name="mode"
-            value="translation"
-            checked={mode === 'translation'}
-            onChange={() => setMode('translation')}
-          />{' '}
-          Choose by Translation
-        </label>
-        <label style={{ ...styles.label, marginLeft: '1rem' }}>
-          <input
-            type="radio"
-            name="mode"
-            value="language"
-            checked={mode === 'language'}
-            onChange={() => setMode('language')}
-          />{' '}
-          Choose by Language
-        </label>
-      </div>
-
-      {/* Translation Dropdown */}
-      {mode === 'translation' && (
+    // ◀ Full‐viewport purple background
+    <div style={styles.page}>
+      {/* Centered inner panel */}
+      <div style={styles.panel}>
+        {/* Mode Switch */}
         <div style={styles.field}>
-          <label htmlFor="translationSelect" style={styles.label}>
-            Translation (with Language):
+          <label style={styles.label}>
+            <input
+              type="radio"
+              name="mode"
+              value="translation"
+              checked={mode === 'translation'}
+              onChange={() => setMode('translation')}
+            />{' '}
+            Choose by Translation
           </label>
-          <select id="translationSelect" style={styles.select}>
-            {sortedBibleData.map(({ translation, language }) => (
-              <option key={translation} value={translation}>
-                {`${translation} (${language})`}
-              </option>
-            ))}
-          </select>
+          <label style={{ ...styles.label, marginLeft: '1.5rem' }}>
+            <input
+              type="radio"
+              name="mode"
+              value="language"
+              checked={mode === 'language'}
+              onChange={() => setMode('language')}
+            />{' '}
+            Choose by Language
+          </label>
         </div>
-      )}
 
-      {/* Language → Translations Dropdowns */}
-      {mode === 'language' && (
-        <>
+        {/* Translation Dropdown */}
+        {mode === 'translation' && (
           <div style={styles.field}>
-            <label htmlFor="languageSelect" style={styles.label}>
-              Language:
+            <label htmlFor="translationSelect" style={styles.label}>
+              Translation (with Language):
             </label>
-            <select
-              id="languageSelect"
-              style={styles.select}
-              value={selectedLanguage}
-              onChange={(e) => setSelectedLanguage(e.target.value)}
-            >
-              {sortedLanguages.map((lang) => (
-                <option key={lang} value={lang}>
-                  {lang}
+            <select id="translationSelect" style={styles.select}>
+              {sortedBibleData.map(({ translation, language }) => (
+                <option key={translation} value={translation}>
+                  {`${translation} (${language})`}
                 </option>
               ))}
             </select>
           </div>
-          <div style={styles.field}>
-            <label htmlFor="langTranslationSelect" style={styles.label}>
-              Translations for “{selectedLanguage}”:
-            </label>
-            <select id="langTranslationSelect" style={styles.select}>
-              {languageTranslations.map((trans) => (
-                <option key={trans} value={trans}>
-                  {trans}
-                </option>
-              ))}
-            </select>
-          </div>
-        </>
-      )}
+        )}
+
+        {/* Language → Translations Dropdowns */}
+        {mode === 'language' && (
+          <>
+            <div style={styles.field}>
+              <label htmlFor="languageSelect" style={styles.label}>
+                Language:
+              </label>
+              <select
+                id="languageSelect"
+                style={styles.select}
+                value={selectedLanguage}
+                onChange={(e) => setSelectedLanguage(e.target.value)}
+              >
+                {sortedLanguages.map((lang) => (
+                  <option key={lang} value={lang}>
+                    {lang}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div style={styles.field}>
+              <label htmlFor="langTranslationSelect" style={styles.label}>
+                Translations for “{selectedLanguage}”:
+              </label>
+              <select id="langTranslationSelect" style={styles.select}>
+                {languageTranslations.map((trans) => (
+                  <option key={trans} value={trans}>
+                    {trans}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 }
 
 const styles = {
-  container: {
+  page: {
     backgroundColor: '#6B1A7B',
-    minHeight: '100vh',
-    padding: '2rem',
-    fontFamily: 'sans-serif',
+    minHeight: '100vh',       // fill the viewport
+    display: 'flex',
+    justifyContent: 'center', // center horizontally
+    alignItems: 'flex-start', // start at top; use 'center' to vertical‐center
+    padding: '2rem 0',
+    boxSizing: 'border-box',
+  },
+  panel: {
+    width: '90%',
+    maxWidth: '600px',
+    backgroundColor: 'rgba(255,255,255,0.1)', // slight white overlay if you like
+    padding: '1.5rem',
+    borderRadius: '8px',
   },
   field: {
-    marginBottom: '1.5rem',
+    marginBottom: '1.25rem',
   },
   label: {
     display: 'inline-block',
-    fontWeight: 'bold',
     color: 'white',
-    verticalAlign: 'middle',
+    fontWeight: 'bold',
+    marginBottom: '0.5rem',
   },
   select: {
-    display: 'block',
     width: '100%',
     padding: '0.5rem',
     fontSize: '1rem',
-    backgroundColor: '#6B1A7B',
+    backgroundColor: '#6B1A7B', // keep selects purple too
     color: 'white',
-    border: '1px solid #FFFFFF',
+    border: '1px solid #fff',
     borderRadius: '4px',
-    marginTop: '0.5rem',
+    marginTop: '0.25rem',
   },
 };
+
 
 
 
