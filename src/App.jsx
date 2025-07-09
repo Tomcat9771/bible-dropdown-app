@@ -40,9 +40,8 @@ export default function App() {
   );
 
   return (
-    // ◀ Full‐viewport purple background
     <div style={styles.page}>
-      {/* Centered inner panel */}
+      {/* Centered panel now up to 1140px wide */}
       <div style={styles.panel}>
         {/* Mode Switch */}
         <div style={styles.field}>
@@ -126,19 +125,18 @@ export default function App() {
 const styles = {
   page: {
     backgroundColor: '#6B1A7B',
-    minHeight: '100vh',       // fill the viewport
+    minHeight: '100vh',
     display: 'flex',
-    justifyContent: 'center', // center horizontally
-    alignItems: 'flex-start', // start at top; use 'center' to vertical‐center
+    justifyContent: 'center',
+    alignItems: 'flex-start', // or 'center' for vertical centering
     padding: '2rem 0',
     boxSizing: 'border-box',
   },
   panel: {
-    width: '90%',
-    maxWidth: '600px',
-    backgroundColor: 'rgba(255,255,255,0.1)', // slight white overlay if you like
-    padding: '1.5rem',
-    borderRadius: '8px',
+    width: '100%',
+    maxWidth: '1140px',  // <— now up to 1140px wide
+    backgroundColor: 'transparent',
+    padding: '0 1rem',   // optional inner padding
   },
   field: {
     marginBottom: '1.25rem',
@@ -153,13 +151,14 @@ const styles = {
     width: '100%',
     padding: '0.5rem',
     fontSize: '1rem',
-    backgroundColor: '#6B1A7B', // keep selects purple too
+    backgroundColor: '#6B1A7B',
     color: 'white',
     border: '1px solid #fff',
     borderRadius: '4px',
     marginTop: '0.25rem',
   },
 };
+
 
 
 
