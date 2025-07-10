@@ -53,7 +53,7 @@ export default function App() {
     setSelectedLangTranslation(languageTranslations[0] || '');
   }, [languageTranslations]);
 
-  // Load and render HubSpot form, then populate hidden fields
+  // 5️⃣ Load HubSpot form once on mount
   useEffect(() => {
     const scriptId = 'hubspot-forms-script';
     function createHubspotForm() {
@@ -63,29 +63,11 @@ export default function App() {
         formId: '214dd91e-f88c-4f37-9eb9-faeee3ca41e9',
         target: '#hubspotFormContainer',
         onFormReady: () => {
-          const fieldOne = document.querySelector(
-            'input[name="trading_as__if_applicable_"]'
-          );
-          const fieldTwo = document.querySelector(
-            'input[name="company"]'
-          );
-          if (fieldOne) {
-            // Map translation or language to fieldOne
-            fieldOne.value = mode === 'translation'
-              ? selectedTranslation
-              : selectedLanguage;
-          }
-          if (fieldTwo) {
-            // Map second choice (if any) to fieldTwo
-            fieldTwo.value = mode === 'translation'
-              ? ''
-              : selectedLangTranslation;
-          }
+          updateHiddenFields();
         }
       });
     }
 
-    // Inject the HubSpot forms script if not already present
     if (!document.getElementById(scriptId)) {
       const script = document.createElement('script');
       script.id = scriptId;
@@ -96,6 +78,29 @@ export default function App() {
     } else {
       createHubspotForm();
     }
+  }, []);
+
+  // 6️⃣ Update hidden HubSpot fields whenever choices change
+  useEffect(() => {
+    function updateHiddenFields() {
+      const fieldOne = document.querySelector(
+        'input[name="trading_as__if_applicable_"]'
+      );
+      const fieldTwo = document.querySelector(
+        'input[name="company"]'
+      );
+      if (fieldOne) {
+        fieldOne.value = mode === 'translation'
+          ? selectedTranslation
+          : selectedLanguage;
+      }
+      if (fieldTwo) {
+        fieldTwo.value = mode === 'translation'
+          ? ''
+          : selectedLangTranslation;
+      }
+    }
+    updateHiddenFields();
   }, [mode, selectedTranslation, selectedLanguage, selectedLangTranslation]);
 
   return (
@@ -232,6 +237,7 @@ const styles = {
     boxSizing: 'border-box',
   },
 };
+
 
 
 
