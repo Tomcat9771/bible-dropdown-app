@@ -1,14 +1,21 @@
 // src/App.jsx
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import bibleData from './bibleData.json';
 
 export default function App() {
   // 1️⃣ Sort all translations A→Z
-  const sortedBibleData = useMemo(() =>
-    [...bibleData].sort((a, b) =>
-      a.translation.localeCompare(b.translation, undefined, { sensitivity: 'base' })
-    )
-  , []);
+  const sortedBibleData = useMemo(
+    () =>
+      [...bibleData].sort((a, b) =>
+        a.translation.localeCompare(b.translation, undefined, { sensitivity: 'base' })
+      ),
+    []
+  );
+
+  // State for translation dropdown (mode: translation)
+  const [selectedTranslation, setSelectedTranslation] = useState(
+    sortedBibleData[0]?.translation || ''
+  );
 
   // 2️⃣ Group by language
   const langMap = useMemo(() => {
@@ -26,7 +33,9 @@ export default function App() {
 
   // UI state
   const [mode, setMode] = useState('translation');
-  const [selectedLanguage, setSelectedLanguage] = useState(sortedLanguages[0] || '');
+  const [selectedLanguage, setSelectedLanguage] = useState(
+    sortedLanguages[0] || ''
+  );
 
   // 4️⃣ Translations for the selected language
   const languageTranslations = useMemo(
@@ -36,10 +45,61 @@ export default function App() {
     [langMap, selectedLanguage]
   );
 
+  // State for second dropdown (mode: language)
+  const [selectedLangTranslation, setSelectedLangTranslation] = useState(
+    languageTranslations[0] || ''
+  );
+  useEffect(() => {
+    setSelectedLangTranslation(languageTranslations[0] || '');
+  }, [languageTranslations]);
+
+  // Load and render HubSpot form, then populate hidden fields
+  useEffect(() => {
+    const scriptId = 'hubspot-forms-script';
+    function createHubspotForm() {
+      if (!window.hbspt) return;
+      window.hbspt.forms.create({
+        portalId: '146384551',
+        formId: '214dd91e-f88c-4f37-9eb9-faeee3ca41e9',
+        target: '#hubspotFormContainer',
+        onFormReady: () => {
+          const fieldOne = document.querySelector(
+            'input[name="trading_as__if_applicable_"]'
+          );
+          const fieldTwo = document.querySelector(
+            'input[name="company"]'
+          );
+          if (fieldOne) {
+            // Map translation or language to fieldOne
+            fieldOne.value = mode === 'translation'
+              ? selectedTranslation
+              : selectedLanguage;
+          }
+          if (fieldTwo) {
+            // Map second choice (if any) to fieldTwo
+            fieldTwo.value = mode === 'translation'
+              ? ''
+              : selectedLangTranslation;
+          }
+        }
+      });
+    }
+
+    // Inject the HubSpot forms script if not already present
+    if (!document.getElementById(scriptId)) {
+      const script = document.createElement('script');
+      script.id = scriptId;
+      script.src = 'https://js.hsforms.net/forms/v2.js';
+      script.defer = true;
+      script.onload = createHubspotForm;
+      document.body.appendChild(script);
+    } else {
+      createHubspotForm();
+    }
+  }, [mode, selectedTranslation, selectedLanguage, selectedLangTranslation]);
+
   return (
-    // ◀ Full‐viewport purple background
     <div style={styles.page}>
-      {/* ◀ Fixed‐width panel */}
       <div style={styles.panel}>
         {/* Mode Switch */}
         <div style={styles.field}>
@@ -71,7 +131,12 @@ export default function App() {
             <label htmlFor="translationSelect" style={styles.label}>
               Translation (with Language):
             </label>
-            <select id="translationSelect" style={styles.select}>
+            <select
+              id="translationSelect"
+              style={styles.select}
+              value={selectedTranslation}
+              onChange={e => setSelectedTranslation(e.target.value)}
+            >
               {sortedBibleData.map(({ translation, language }) => (
                 <option key={translation} value={translation}>
                   {`${translation} (${language})`}
@@ -105,7 +170,12 @@ export default function App() {
               <label htmlFor="langTranslationSelect" style={styles.label}>
                 Translations for “{selectedLanguage}”:
               </label>
-              <select id="langTranslationSelect" style={styles.select}>
+              <select
+                id="langTranslationSelect"
+                style={styles.select}
+                value={selectedLangTranslation}
+                onChange={e => setSelectedLangTranslation(e.target.value)}
+              >
                 {languageTranslations.map(trans => (
                   <option key={trans} value={trans}>
                     {trans}
@@ -115,6 +185,9 @@ export default function App() {
             </div>
           </>
         )}
+
+        {/* HubSpot Form Container */}
+        <div id="hubspotFormContainer" style={{ marginTop: '2rem' }} />
       </div>
     </div>
   );
@@ -124,17 +197,17 @@ const styles = {
   page: {
     backgroundColor: '#6B1A7B',
     minHeight: '100vh',
-    width: '100vw',            // ensure it spans full viewport width
+    width: '100vw',
     display: 'flex',
-    justifyContent: 'center',  // center the panel horizontally
-    alignItems: 'flex-start',  // or 'center' to vertical‐center
+    justifyContent: 'center',
+    alignItems: 'flex-start',
     padding: '2rem 0',
     boxSizing: 'border-box',
     margin: 0,
   },
   panel: {
-    width: '100%',            // take up all available up to maxWidth
-    maxWidth: '1140px',       // fixed max width of 1140px
+    width: '100%',
+    maxWidth: '1140px',
     boxSizing: 'border-box',
     padding: '1rem',
   },
@@ -159,6 +232,7 @@ const styles = {
     boxSizing: 'border-box',
   },
 };
+
 
 
 
